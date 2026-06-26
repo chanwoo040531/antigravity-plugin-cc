@@ -6,7 +6,7 @@ user-invocable: false
 
 # Antigravity Runtime
 
-Use this skill only inside the `agy:antigravity-explorer` subagent. It defines the single, canonical way to call the Antigravity CLI (`agy`) for broad-context exploration and verification.
+Use this skill only inside the `agy:antigravity-explorer` subagent. It defines the single, canonical way to call the Antigravity CLI (`agy`) for broad-context codebase analysis.
 
 ## The one helper command
 
@@ -23,7 +23,7 @@ agy -p "$WRAPPED_PROMPT" \
 - `-p` / `--print` runs a single prompt non-interactively and prints the response to stdout. This is the only mode used here.
 - `--add-dir "$PWD"` puts the current working directory into agy's workspace so it can read the codebase. Repeat `--add-dir` for each extra directory the user named.
 - `--dangerously-skip-permissions` is required because print mode is non-interactive: without it agy blocks on tool-permission prompts and the run hangs. It auto-approves *every* tool, including writes — so read-only is requested by the prompt wrapper below, not enforced by any gate.
-- `--print-timeout 9m` gives wide-context exploration room to finish. Keep the Bash tool timeout at its maximum (600000 ms) so it does not cut the run off early.
+- `--print-timeout 9m` gives wide-context analysis room to finish. Keep the Bash tool timeout at its maximum (600000 ms) so it does not cut the run off early.
 - Default model is `Gemini 3.5 Flash (High)`. Override only when the user explicitly supplies an exact model string (valid names come from `agy models`; the user provides the string — do not run that command yourself). Drop the `--model` flag entirely if the user asks for agy's own default.
 
 ## Read-only request (required, best-effort)
@@ -41,7 +41,7 @@ If a task seems to require a change, describe what you would change instead of
 doing it. Cite concrete evidence as file:line.
 
 TASK:
-<the user's exploration or verification request, verbatim>
+<the user's analysis request, verbatim>
 ```
 
 Never drop this prefix, even when the user's request sounds harmless.
