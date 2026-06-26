@@ -1,15 +1,17 @@
 # antigravity-plugin-cc
 
-Use [Antigravity](https://antigravity.google) (`agy`) from inside Claude Code for **broad-context exploration and verification**.
+Use [Antigravity](https://antigravity.google) (`agy`) from inside Claude Code for **broad-context codebase analysis**.
 
-Antigravity's Gemini models read and reason over a wide context, which makes them well suited to surveying large codebases and fact-checking claims. This plugin delegates that work to the `agy` CLI and keeps the bulky analysis out of Claude Code's own context — only the synthesized result comes back.
+Antigravity's Gemini models read and reason over a wide context, which makes them well suited to scanning large codebases, mapping the impact of a change, auditing security, and root-causing infrastructure incidents from bulk logs. This plugin delegates that work to the `agy` CLI and keeps the bulky analysis out of Claude Code's own context — only the synthesized result comes back, ready to hand to Claude or Codex for the follow-up edit.
 
 ## Commands
 
-- `/agy:explore <what to explore>` — open-ended discovery. Maps, traces, or surveys code wide across the workspace (call paths, where a concern lives, how subsystems connect) and reports findings with `file:line` citations.
-- `/agy:verify <claim or hypothesis>` — adversarial verification. Reads the relevant code, tries to refute the claim, and returns a `CONFIRMED` / `REFUTED` / `INCONCLUSIVE` verdict with supporting evidence.
+- `/agy:repo-scan <rules or area>` — whole-repository architecture scan. Checks the codebase against architecture rules and reports layering breaches, illegal cross-layer imports, and cyclic dependencies with `file:line` citations.
+- `/agy:impact-map <component or change>` — blast-radius analysis. Traces a planned change to a core component outward to every affected module, config, and test, so you can avoid side effects before starting.
+- `/agy:sec-audit <guideline or area>` — full-codebase security audit. Scans endpoints and security-critical layers for weak auth, token handling, and config issues, reporting each finding with a severity and `file:line`.
+- `/agy:infra-debug <symptom or signal>` — infrastructure root-cause analysis. Correlates Kubernetes manifests, OpenTelemetry config, and bulk log/trace dumps to pinpoint where a failing path breaks and describe the fix direction.
 
-Both accept optional routing flags:
+All commands accept optional routing flags:
 
 - `--model "<name>"` — override the default model (`Gemini 3.5 Flash (High)`). Run `agy models` for valid names.
 - `--add-dir <path>` — add another directory to agy's workspace (repeatable). The current directory is always included.
@@ -17,15 +19,16 @@ Both accept optional routing flags:
 ### Examples
 
 ```
-/agy:explore trace the entire authentication flow in this repo
-/agy:verify does this PR introduce an N+1 query?
-/agy:explore --add-dir ../shared-lib find everywhere the payment logic is called from
+/agy:repo-scan enforce hexagonal architecture — domain must not import infrastructure
+/agy:impact-map I'm changing the Redis stream manager's serialization format
+/agy:sec-audit check every endpoint for missing asymmetric JWT verification
+/agy:infra-debug --add-dir ./logs distributed traces drop between gateway and order service
 ```
 
 ## How it works
 
 ```
-/agy:explore | /agy:verify   (commands, frame the request)
+/agy:repo-scan | impact-map | sec-audit | infra-debug   (commands, frame the request)
         ↓  Agent tool
 agy:antigravity-explorer      (subagent, thin forwarder — isolates the heavy context)
         ↓  antigravity-runtime skill

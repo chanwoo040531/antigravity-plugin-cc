@@ -4,14 +4,14 @@
     "name": "chanwoo040531"
   },
   "metadata": {
-    "description": "Use Antigravity (agy) from Claude Code for broad-context exploration and verification.",
-    "version": "0.1.0"
+    "description": "Use Antigravity (agy) from Claude Code for broad-context codebase analysis.",
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "agy",
-      "description": "Delegate wide-context codebase exploration and claim verification to the Antigravity CLI (agy).",
-      "version": "0.1.0",
+      "description": "Delegate broad-context codebase analysis — architecture scan, change-impact map, security audit, and infra root-cause — to the Antigravity CLI (agy).",
+      "version": "0.2.0",
       "author": {
         "name": "chanwoo040531"
       },
