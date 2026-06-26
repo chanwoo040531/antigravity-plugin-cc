@@ -2,6 +2,7 @@
 description: Diagnose infrastructure and observability failures with Antigravity (agy) — root-cause analysis over manifests, telemetry config, and bulk logs
 argument-hint: "[--model <agy model name>] [--add-dir <path>] <the incident, symptom, or signal to root-cause>"
 allowed-tools: Agent
+disable-model-invocation: true
 ---
 
 Invoke the `agy:antigravity-explorer` subagent via the `Agent` tool (`subagent_type: "agy:antigravity-explorer"`), forwarding an INFRA-DEBUG-framed request built from the user's input.

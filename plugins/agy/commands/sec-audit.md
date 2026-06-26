@@ -2,6 +2,7 @@
 description: Audit the whole codebase for security vulnerabilities with Antigravity (agy) — auth, token handling, and config weaknesses across endpoints
 argument-hint: "[--model <agy model name>] [--add-dir <path>] <security guideline, threat, or area to audit>"
 allowed-tools: Agent
+disable-model-invocation: true
 ---
 
 Invoke the `agy:antigravity-explorer` subagent via the `Agent` tool (`subagent_type: "agy:antigravity-explorer"`), forwarding a SEC-AUDIT-framed request built from the user's input.

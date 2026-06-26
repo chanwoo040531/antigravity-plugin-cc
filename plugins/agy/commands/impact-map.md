@@ -2,6 +2,7 @@
 description: Map the blast radius of a planned change with Antigravity (agy) — the modules, configs, and tests that would be affected
 argument-hint: "[--model <agy model name>] [--add-dir <path>] <the component, schema, or change to map the impact of>"
 allowed-tools: Agent
+disable-model-invocation: true
 ---
 
 Invoke the `agy:antigravity-explorer` subagent via the `Agent` tool (`subagent_type: "agy:antigravity-explorer"`), forwarding an IMPACT-MAP-framed request built from the user's input.

@@ -2,6 +2,7 @@
 description: Scan the whole repository's architecture with Antigravity (agy) and report rule violations, layering breaches, and cyclic dependencies
 argument-hint: "[--model <agy model name>] [--add-dir <path>] <architecture rules to enforce, or the area to scan>"
 allowed-tools: Agent
+disable-model-invocation: true
 ---
 
 Invoke the `agy:antigravity-explorer` subagent via the `Agent` tool (`subagent_type: "agy:antigravity-explorer"`), forwarding a REPO-SCAN-framed request built from the user's input.
