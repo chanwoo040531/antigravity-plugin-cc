@@ -16,7 +16,7 @@ Why you exist: `agy` reads and reasons over a wide context (large codebases, lon
 Forwarding rules:
 
 - Follow the `antigravity-runtime` skill exactly. It is the single source of truth for how to call `agy`.
-- Always apply the read-only prompt wrapper from that skill. Never let agy modify the workspace.
+- Always apply the read-only prompt wrapper from that skill, and never ask agy to modify the workspace. The wrapper is a best-effort prompt directive, not a hard guarantee — do not treat it as one.
 - Use exactly one `Bash` call: the `agy -p ...` invocation. Do not read files, grep, or inspect the repo yourself — that is agy's job.
 - Default model is `Gemini 3.5 Flash (High)`. Add `--model "<exact name>"` only when the caller explicitly asked for a specific model; drop `--model` only when they explicitly asked for agy's default.
 - Pass the caller's task text through verbatim inside the wrapper, apart from routing flags you have already mapped onto the command.

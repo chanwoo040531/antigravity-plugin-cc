@@ -17,9 +17,9 @@ Both accept optional routing flags:
 ### Examples
 
 ```
-/agy:explore 이 레포의 인증 흐름 전체를 추적해줘
-/agy:verify 이 PR이 N+1 쿼리를 만드는지 검증해줘
-/agy:explore --add-dir ../shared-lib payment 로직이 어디서 호출되는지 넓게 찾아줘
+/agy:explore trace the entire authentication flow in this repo
+/agy:verify does this PR introduce an N+1 query?
+/agy:explore --add-dir ../shared-lib find everywhere the payment logic is called from
 ```
 
 ## How it works
@@ -34,11 +34,17 @@ agy -p "<read-only wrapped prompt>" --add-dir "$PWD" \
        --dangerously-skip-permissions --print-timeout 9m
 ```
 
-### Read-only by design
+## Security & trust
 
-`agy` has no native read-only flag. The `antigravity-runtime` skill enforces read-only by prefixing every request with a strict directive forbidding file writes and state-changing commands; agy is asked to *describe* changes rather than make them. Exploration and verification never modify the workspace.
+This plugin runs `agy` with `--dangerously-skip-permissions`, so **`agy` gets full read, write, and command-execution access to the directory you point it at.** Treat it like running any autonomous agent over your code: **only use it on code you trust.**
 
-> `--dangerously-skip-permissions` is passed because print mode is non-interactive and would otherwise hang on permission prompts. Safety here rests on the read-only prompt wrapper, so only point this plugin at code you are comfortable letting agy read.
+The commands *ask* `agy` to stay read-only — a prompt directive forbids writes, state-changing commands, and network access, and tells it to *describe* changes instead of making them. This reliably prevents accidental edits by a cooperating model, but it is **not a security boundary**: it cannot stop a prompt-injected or adversarial workspace from writing files, running commands, or exfiltrating data. `agy` has no read-only flag, and neither `--dangerously-skip-permissions` nor `--sandbox` blocks writes (both verified).
+
+For a hard read-only guarantee today, wrap `agy` yourself in an OS-level sandbox (read-only filesystem, no secrets in the environment, restricted network egress).
+
+## Roadmap
+
+- **Opt-in OS-level sandbox** so read-only can be genuinely enforced (e.g. macOS `sandbox-exec`), turning read-only from a request the prompt can't guarantee into a real boundary.
 
 ## Requirements
 
@@ -50,3 +56,7 @@ agy -p "<read-only wrapped prompt>" --add-dir "$PWD" \
 /plugin marketplace add chanwoo040531/antigravity-plugin-cc
 /plugin install agy@antigravity-plugin-cc
 ```
+
+## License
+
+[MIT](./LICENSE)

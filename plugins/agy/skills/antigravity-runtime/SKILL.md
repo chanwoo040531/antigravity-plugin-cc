@@ -1,6 +1,6 @@
 ---
 name: antigravity-runtime
-description: Internal contract for invoking the Antigravity CLI (agy) in read-only print mode from Claude Code
+description: Internal contract for invoking the Antigravity CLI (agy) in non-interactive print mode for best-effort read-only analysis
 user-invocable: false
 ---
 
@@ -22,20 +22,23 @@ agy -p "$WRAPPED_PROMPT" \
 
 - `-p` / `--print` runs a single prompt non-interactively and prints the response to stdout. This is the only mode used here.
 - `--add-dir "$PWD"` puts the current working directory into agy's workspace so it can read the codebase. Repeat `--add-dir` for each extra directory the user named.
-- `--dangerously-skip-permissions` is required because print mode is non-interactive: without it agy blocks on tool-permission prompts and the run hangs. Read-only safety is enforced by the prompt wrapper below, not by a permission gate.
+- `--dangerously-skip-permissions` is required because print mode is non-interactive: without it agy blocks on tool-permission prompts and the run hangs. It auto-approves *every* tool, including writes — so read-only is requested by the prompt wrapper below, not enforced by any gate.
 - `--print-timeout 9m` gives wide-context exploration room to finish. Keep the Bash tool timeout at its maximum (600000 ms) so it does not cut the run off early.
-- Default model is `Gemini 3.5 Flash (High)`. Override with the user's exact model string only when they explicitly ask (run `agy models` for the valid names). Drop the `--model` flag entirely if the user asks for agy's own default.
+- Default model is `Gemini 3.5 Flash (High)`. Override only when the user explicitly supplies an exact model string (valid names come from `agy models`; the user provides the string — do not run that command yourself). Drop the `--model` flag entirely if the user asks for agy's own default.
 
-## Read-only enforcement (required)
+## Read-only request (required, best-effort)
 
-`agy` has no native read-only flag. Enforce read-only by prefixing the user's task with this directive every time, producing `$WRAPPED_PROMPT`:
+`agy` has no read-only mode: neither `--dangerously-skip-permissions` nor `--sandbox` prevents file writes (both were tested and let agy create files). Read-only is therefore **advisory** — it depends on the model cooperating with the directive below, and an adversarial or prompt-injected workspace can override it. Treat this as a request, never a security boundary; only point the plugin at code the user trusts agy to read.
+
+Still, always prefix the user's task with this directive (it reliably stops cooperative writes), producing `$WRAPPED_PROMPT`:
 
 ```
 READ-ONLY ANALYSIS MODE. You may read, search, and analyze any file in the
-workspace, but you MUST NOT create, modify, move, or delete files, and MUST NOT
-run any command that changes state (no writes, installs, migrations, network
-mutations, git commits, or pushes). If a task seems to require a change, describe
-what you would change instead of doing it. Cite concrete evidence as file:line.
+workspace, but you MUST NOT create, modify, move, or delete files, MUST NOT run
+any command that changes state (no writes, installs, migrations, git commits, or
+pushes), and MUST NOT access the network or send any workspace content anywhere.
+If a task seems to require a change, describe what you would change instead of
+doing it. Cite concrete evidence as file:line.
 
 TASK:
 <the user's exploration or verification request, verbatim>

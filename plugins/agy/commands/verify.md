@@ -16,7 +16,7 @@ How to frame the request you forward:
 - This is adversarial verification, not discovery. Tell agy to read the relevant code wide across the workspace and decide whether the stated claim/hypothesis holds.
 - Instruct agy to default to skepticism: actively try to refute the claim, look for counter-evidence and edge cases, and only confirm when the evidence is concrete.
 - Require a clear verdict — CONFIRMED / REFUTED / INCONCLUSIVE — followed by the supporting `file:line` evidence and the reasoning that ties it to the verdict.
-- The verification is READ-ONLY analysis; the subagent enforces that via the runtime skill. Do not ask agy to change anything.
+- The verification is READ-ONLY analysis; the subagent applies the read-only request (best-effort, via the runtime skill's prompt wrapper). Do not ask agy to change anything.
 
 Routing flags (strip from the task text, hand to the subagent as runtime controls):
 

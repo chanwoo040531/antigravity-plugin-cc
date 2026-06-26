@@ -15,7 +15,7 @@ How to frame the request you forward:
 
 - This is open-ended discovery. Tell agy to map, trace, or survey the relevant code wide across the workspace and report what it finds — control flow, call paths, where a concern is implemented, how subsystems connect.
 - Ask for concrete `file:line` citations and a structured summary (what was found, where, and how the pieces relate), not a vague narrative.
-- The exploration is READ-ONLY analysis; the subagent enforces that via the runtime skill. Do not ask agy to change anything.
+- The exploration is READ-ONLY analysis; the subagent applies the read-only request (best-effort, via the runtime skill's prompt wrapper). Do not ask agy to change anything.
 
 Routing flags (strip from the task text, hand to the subagent as runtime controls):
 
