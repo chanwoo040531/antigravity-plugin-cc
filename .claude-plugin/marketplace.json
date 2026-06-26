@@ -1,0 +1,21 @@
+{
+  "name": "antigravity-plugin-cc",
+  "owner": {
+    "name": "chanwoo040531"
+  },
+  "metadata": {
+    "description": "Use Antigravity (agy) from Claude Code for broad-context exploration and verification.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "agy",
+      "description": "Delegate wide-context codebase exploration and claim verification to the Antigravity CLI (agy).",
+      "version": "0.1.0",
+      "author": {
+        "name": "chanwoo040531"
+      },
+      "source": "./plugins/agy"
+    }
+  ]
+}

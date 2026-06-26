@@ -1,0 +1,8 @@
+{
+  "name": "agy",
+  "version": "0.1.0",
+  "description": "Delegate wide-context codebase exploration and claim verification to the Antigravity CLI (agy).",
+  "author": {
+    "name": "chanwoo040531"
+  }
+}
