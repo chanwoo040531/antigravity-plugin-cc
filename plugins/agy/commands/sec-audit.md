@@ -16,7 +16,7 @@ How to frame the request you forward:
 - This is a full-codebase security audit. Tell agy to scan every endpoint and the security-critical layers wide across the workspace — security config, request filters, auth and token handling — and find vulnerabilities.
 - Default to skepticism: actively look for missing or weak controls (e.g. missing asymmetric JWT verification, OAuth2 PKCE not enforced, unhashed tokens in storage, broken authorization checks, secrets in code), not just confirm what looks fine.
 - If the user supplied a security guideline or threat model, audit against it. Otherwise apply common application-security baselines.
-- Require a structured report: each finding with a severity, the vulnerable `file:line`, the concrete risk, and enough context that a fix can be written afterward. Separate confirmed issues from suspected ones.
+- Require a structured report: each finding with a severity, the vulnerable `file:line`, the concrete risk, and enough context that a fix can be written afterward, with agy separating confirmed issues from suspected ones.
 - This is READ-ONLY analysis; the subagent applies the read-only request (best-effort, via the runtime skill's prompt wrapper). Do not ask agy to patch anything — only report.
 
 Routing flags (strip from the task text, hand to the subagent as runtime controls):
