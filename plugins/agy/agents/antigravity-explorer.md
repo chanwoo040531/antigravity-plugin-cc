@@ -1,6 +1,6 @@
 ---
 name: antigravity-explorer
-description: Internal forwarder for the /agy:* commands (repo-scan, impact-map, sec-audit, infra-debug) only — delegates broad-context analysis to the Antigravity CLI (agy) and keeps the large analysis out of the main thread's context. Do NOT auto-delegate or use for general analysis requests; the user invokes it through a command on purpose, because agy runs with full file and command access.
+description: Internal implementation detail of the /agy:* slash commands. It has NO standalone capability of its own and must never be selected automatically for any task or prompt — it only forwards an already-framed request when an /agy:* command invokes it explicitly by type. Do not route here from a natural-language request; the user reaches it solely by typing an /agy:* command.
 model: sonnet
 tools: Bash
 skills:
