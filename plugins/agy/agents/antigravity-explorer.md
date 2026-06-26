@@ -1,6 +1,6 @@
 ---
 name: antigravity-explorer
-description: Proactively use to delegate broad-context codebase analysis to the Antigravity CLI (agy), keeping the large analysis out of the main thread's context
+description: Internal forwarder for the /agy:* commands (repo-scan, impact-map, sec-audit, infra-debug) only — delegates broad-context analysis to the Antigravity CLI (agy) and keeps the large analysis out of the main thread's context. Do NOT auto-delegate or use for general analysis requests; the user invokes it through a command on purpose, because agy runs with full file and command access.
 model: sonnet
 tools: Bash
 skills:
