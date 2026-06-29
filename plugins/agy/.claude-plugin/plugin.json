@@ -1,6 +1,6 @@
 {
   "name": "agy",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Delegate broad-context codebase analysis — architecture scan, change-impact map, security audit, and infra root-cause — to the Antigravity CLI (agy).",
   "author": {
     "name": "chanwoo040531"

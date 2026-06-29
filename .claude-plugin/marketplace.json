@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Use Antigravity (agy) from Claude Code for broad-context codebase analysis.",
-    "version": "0.2.1"
+    "version": "0.3.0"
   },
   "plugins": [
     {
       "name": "agy",
       "description": "Delegate broad-context codebase analysis — architecture scan, change-impact map, security audit, and infra root-cause — to the Antigravity CLI (agy).",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "author": {
         "name": "chanwoo040531"
       },
