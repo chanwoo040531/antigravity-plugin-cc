@@ -38,9 +38,10 @@ Resolve `~` to the real home directory before reading/writing.
 
 The rule to ensure is exactly this string: `Bash(agy -p:*)`
 
-- Read the target settings file and inspect the **`permissions.allow` array specifically** — not the file as raw text. A substring match anywhere in the file is wrong: the same string could sit in `permissions.deny` or another field, which does NOT unblock the analysis commands.
-  - If `permissions.allow` already contains exactly `Bash(agy -p:*)`, it is already configured — do NOT add a duplicate. Skip to step 4 and report "already configured".
-  - Otherwise insert `"Bash(agy -p:*)"` as the **first** element of `permissions.allow`, preserving every existing entry and all other settings exactly. (If you also notice `Bash(agy -p:*)` sitting in `permissions.deny`, still add the allow entry, and call out the conflicting deny rule in your report — a deny rule there will keep the commands blocked.)
+- Read the target settings file and inspect the permission **arrays structurally** — not the file as raw text. A substring match anywhere in the file is wrong: the same string in `permissions.deny` or `permissions.ask` does NOT unblock the analysis commands. Claude Code evaluates rules in the order **deny → ask → allow**, so the rule is effective (runs with no prompt) only when it is in `permissions.allow` AND no matching entry sits in `permissions.deny` (which blocks) or `permissions.ask` (which prompts).
+  - Treat it as already configured — skip the edit and report "already configured" — only when `permissions.allow` contains exactly `Bash(agy -p:*)` AND no matching `deny`/`ask` entry shadows it. Do not add a duplicate in that case.
+  - Otherwise insert `"Bash(agy -p:*)"` as the **first** element of `permissions.allow`, preserving every existing entry and all other settings exactly.
+  - If you find a matching `Bash(agy -p:*)` already in `permissions.deny` or `permissions.ask`, still add the `allow` entry, but call the shadowing rule out explicitly in your report: a `deny` entry will keep the commands blocked and an `ask` entry will keep prompting until the user removes it. Do not silently delete the user's deny/ask rules.
 - Handle these structure variants:
   - File does not exist → create it with the `Write` tool, minimal content: `{ "permissions": { "allow": ["Bash(agy -p:*)"] } }`. (`Edit` cannot create a new file; use `Write` only for this missing-file case.)
   - File exists but has no `permissions` key → add `"permissions": { "allow": ["Bash(agy -p:*)"] }`.
