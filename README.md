@@ -8,12 +8,12 @@ Antigravity's Gemini models read and reason over a wide context, which makes the
 
 - `/agy:repo-scan <rules or area>` — whole-repository architecture scan. Checks the codebase against architecture rules and reports layering breaches, illegal cross-layer imports, and cyclic dependencies with `file:line` citations.
 - `/agy:impact-map <component or change>` — blast-radius analysis. Traces a planned change to a core component outward to every affected module, config, and test, so you can avoid side effects before starting.
-- `/agy:sec-audit <guideline or area>` — full-codebase security audit. Scans endpoints and security-critical layers for weak auth, token handling, and config issues, reporting each finding with a severity and `file:line`.
+- `/agy:sec-audit <guideline or area>` — full-codebase security audit. Scans endpoints and security-critical layers for weak auth, token handling, and config issues, reporting each finding with a severity and `file:line`. Defaults to `Claude Sonnet 4.6 (Thinking)` instead of the shared Gemini default, because Antigravity's Gemini models refuse security-audit requests (pass `--model` to override).
 - `/agy:infra-debug <symptom or signal>` — infrastructure root-cause analysis. Correlates Kubernetes manifests, OpenTelemetry config, and bulk log/trace dumps to pinpoint where a failing path breaks and describe the fix direction.
 
 All commands accept optional routing flags:
 
-- `--model "<name>"` — override the default model (`Gemini 3.5 Flash (High)`). Run `agy models` for valid names.
+- `--model "<name>"` — override the default model (`Gemini 3.5 Flash (High)`; `/agy:sec-audit` defaults to `Claude Sonnet 4.6 (Thinking)`). Run `agy models` for valid names.
 - `--add-dir <path>` — add another directory to agy's workspace (repeatable). The current directory is always included.
 
 ### Examples

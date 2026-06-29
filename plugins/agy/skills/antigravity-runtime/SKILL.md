@@ -24,7 +24,7 @@ agy -p "$WRAPPED_PROMPT" \
 - `--add-dir "$PWD"` puts the current working directory into agy's workspace so it can read the codebase. Repeat `--add-dir` for each extra directory the user named.
 - `--dangerously-skip-permissions` is required because print mode is non-interactive: without it agy blocks on tool-permission prompts and the run hangs. It auto-approves *every* tool, including writes — so read-only is requested by the prompt wrapper below, not enforced by any gate.
 - `--print-timeout 9m` gives wide-context analysis room to finish. Keep the Bash tool timeout at its maximum (600000 ms) so it does not cut the run off early.
-- Default model is `Gemini 3.5 Flash (High)`. Override only when the user explicitly supplies an exact model string (valid names come from `agy models`; the user provides the string — do not run that command yourself). Drop the `--model` flag entirely if the user asks for agy's own default.
+- Default model is `Gemini 3.5 Flash (High)` — this is the fallback used only when no caller supplies a model. The model is chosen by the **caller**: the invoking `/agy:*` command or the user. A command may carry its own default model (for example, it forwards a fixed `--model` because a given model refuses its task category); when any caller supplies a model string, honor it and pass it through to `agy --model`, even if the end user typed no `--model`. Drop the `--model` flag entirely only when a caller explicitly asks for agy's own default. Valid model names come from `agy models`; the caller provides the string — do not run that command yourself.
 
 ## Read-only request (required, best-effort)
 
