@@ -60,8 +60,11 @@ agy -p "<read-only로 감싼 프롬프트>" --add-dir "$PWD" \
 ```
 /plugin marketplace add chanwoo040531/antigravity-plugin-cc
 /plugin install agy@antigravity-plugin-cc
+/reload-plugins
 /agy:setup
 ```
+
+`/reload-plugins`는 방금 설치한 플러그인을 현재 세션에서 활성화합니다 — 세션 도중에 설치한 플러그인은 자동으로 로드되지 않습니다(대신 Claude Code를 재시작해도 됩니다).
 
 `/agy:setup`은 한 번만 실행하면 됩니다. `agy`가 설치·인증되어 있는지 확인한 뒤 `Bash(agy -p:*)` 권한 규칙을 Claude Code 설정에 추가합니다 — 만약 Claude Code의 auto-mode 분류기가 자동 편집을 막으면, 직접 추가할 수 있도록 해당 한 줄을 출력합니다(`/permissions`를 실행해 `Bash(agy -p:*)`를 허용해도 됩니다). 이 규칙이 없으면 분류기가 분석 명령어를 차단합니다: explorer 서브에이전트가 `agy -p … --dangerously-skip-permissions`를 실행하는데, 분류기가 이를 "unsafe agent"로 간주해 실행 전에 거부하기 때문입니다.
 
