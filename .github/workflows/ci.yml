@@ -1,0 +1,18 @@
+# Validates the plugin manifests on every PR and push to main: the JSON parses
+# and the version fields are mutually consistent. No build or test runner exists
+# for this manifest-only repo — this is the guard that the manifests stay sane.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifests and version sync
+        run: scripts/check-version.sh
