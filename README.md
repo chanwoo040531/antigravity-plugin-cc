@@ -1,5 +1,7 @@
 # antigravity-plugin-cc
 
+**English** | [한국어](./README.ko.md)
+
 Use [Antigravity](https://antigravity.google) (`agy`) from inside Claude Code for **broad-context codebase analysis**.
 
 Antigravity's Gemini models read and reason over a wide context, which makes them well suited to scanning large codebases, mapping the impact of a change, auditing security, and root-causing infrastructure incidents from bulk logs. This plugin delegates that work to the `agy` CLI and keeps the bulky analysis out of Claude Code's own context — only the synthesized result comes back, ready to hand to Claude or Codex for the follow-up edit.
