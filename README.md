@@ -1,5 +1,7 @@
 # antigravity-plugin-cc
 
+**English** | [한국어](./README.ko.md)
+
 Use [Antigravity](https://antigravity.google) (`agy`) from inside Claude Code for **broad-context codebase analysis**.
 
 Antigravity's Gemini models read and reason over a wide context, which makes them well suited to scanning large codebases, mapping the impact of a change, auditing security, and root-causing infrastructure incidents from bulk logs. This plugin delegates that work to the `agy` CLI and keeps the bulky analysis out of Claude Code's own context — only the synthesized result comes back, ready to hand to Claude or Codex for the follow-up edit.
@@ -58,8 +60,11 @@ For a hard read-only guarantee today, wrap `agy` yourself in an OS-level sandbox
 ```
 /plugin marketplace add chanwoo040531/antigravity-plugin-cc
 /plugin install agy@antigravity-plugin-cc
+/reload-plugins
 /agy:setup
 ```
+
+`/reload-plugins` activates the freshly installed plugin in the current session — a plugin installed mid-session doesn't load automatically (you can restart Claude Code instead).
 
 `/agy:setup` is a one-time step. It checks that `agy` is installed and authenticated, then adds the `Bash(agy -p:*)` permission rule to your Claude Code settings — or, if Claude Code's auto-mode classifier blocks the automatic edit, prints the one line for you to add (you can also run `/permissions` and allow `Bash(agy -p:*)`). Without that rule, the classifier blocks the analysis commands: the explorer subagent runs `agy -p … --dangerously-skip-permissions`, which the classifier treats as an "unsafe agent" and denies before it runs.
 
