@@ -1,0 +1,85 @@
+# Publishes a GitHub Release when a v* tag is pushed.
+#
+# Release flow (the workflow validates; it does not create the tag):
+#   1. Bump the version in the three manifest fields and add a CHANGELOG section.
+#   2. Commit on a branch, open a PR, merge to main.
+#   3. Tag the merge commit `vX.Y.Z` and push the tag.
+# The job then asserts the tag matches every version field and that CHANGELOG.md
+# has a matching section, extracts that section as the release notes, and
+# publishes the Release. A mismatch fails the job instead of shipping.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the tag commit can be checked against main
+
+      - name: Verify the tag commit is on main
+        # The documented flow tags a commit already merged to main. Guard it:
+        # a v* tag pushed on an unmerged or stale branch (whose version fields
+        # happen to match) must not publish a release from the wrong commit.
+        #
+        # This asserts ancestry, NOT tip-equality (origin/main == tag SHA), by
+        # design. Tip-equality races with any commit that lands on main between
+        # the tag push and this job running (TOCTOU), failing legitimate
+        # releases. Backfilling a release for an older version is benign: the
+        # version-field guard below forces the tag, commit, and notes to agree
+        # on the same version; re-tagging an existing version edits identical
+        # notes (idempotent step); and GitHub marks "latest" by semver, so an
+        # older backfill can't displace a newer release.
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "ERROR: tag $GITHUB_REF_NAME ($GITHUB_SHA) is not contained in origin/main." >&2
+            exit 1
+          fi
+
+      - name: Verify tag matches version fields and CHANGELOG
+        run: scripts/check-version.sh "${{ github.ref_name }}"
+
+      - name: Extract release notes from CHANGELOG
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # Print the lines of the "## <version>" section, stopping at the next
+          # "## " header. Matched against a literal whole-line header so a
+          # version that is a prefix of another (e.g. 0.3 vs 0.3.1) can't bleed.
+          awk -v target="## ${version}" '
+            $0 == target { capture = 1; next }
+            capture && /^## / { exit }
+            capture { print }
+          ' plugins/agy/CHANGELOG.md > release-notes.md
+          # A header with only blank lines under it still writes newline bytes,
+          # so check for at least one non-whitespace line, not just file size.
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "ERROR: extracted release notes are empty for $version." >&2
+            exit 1
+          fi
+          echo "----- release notes -----"
+          cat release-notes.md
+
+      - name: Create or update GitHub Release
+        # Idempotent so a rerun after a partial success (or to refresh notes)
+        # edits the existing release instead of failing on "already exists".
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          fi
