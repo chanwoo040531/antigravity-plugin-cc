@@ -16,7 +16,9 @@ $ARGUMENTS
 
 The `/agy:*` analysis commands fork the `agy:antigravity-explorer` subagent, which runs `agy -p … --dangerously-skip-permissions`. Claude Code's **auto-mode classifier** flags that Bash call as an "unsafe agent" ("an agentic CLI with approval gates disabled") and blocks it before it runs — so a fresh install hits a hard denial on the first `/agy:repo-scan`. The documented escape hatch (Claude Code's own denial message says so) is a Bash permission **allow rule**: `Bash(agy -p:*)`. With that rule present, the classifier lets the call through. It is verified to take effect mid-session and to be inherited by subagents.
 
-This rule only suppresses a redundant prompt on a user-initiated action. It does NOT weaken the plugin's safety model: every `/agy:*` command keeps `disable-model-invocation: true`, so agy still runs only when the user explicitly types an `/agy:*` command. Point the plugin only at code you trust agy to read.
+Be honest about what this rule grants. `Bash(agy -p:*)` auto-approves **every** `agy -p` print-mode Bash call in any Claude Code session that reads these settings — not just this plugin's commands. `disable-model-invocation: true` only stops the plugin's own commands from auto-firing; it does **not** scope the permission to them. So the rule does widen the trust boundary: it says "I trust any `agy -p …` call to run on this machine without a per-call prompt" (and `agy -p` is always paired with `--dangerously-skip-permissions`, which auto-approves writes). Only add it if you accept that, and point the plugin only at code you trust agy to read. Use `--project` to limit the rule to one repository instead of the whole machine.
+
+`agy -p` is already the tightest *meaningful* scope a prefix rule can express: it excludes interactive `agy`, `agy install`, etc. It cannot be narrowed to "only this plugin's exact command" — Claude Code permission patterns match the command *prefix*, and the variable user prompt sits right after `-p`, so the later fixed flags (including `--dangerously-skip-permissions`) cannot be pinned in the pattern.
 
 ## Steps
 
@@ -55,6 +57,6 @@ Print a short status covering:
 - **agy**: installed & authenticated / installed but not authenticated / not installed (with the matching next step from step 2).
 - **Permission rule**: added to `<file>` / already present in `<file>` / could not be written automatically.
 - If the rule could not be written, give the manual fix verbatim: add `"Bash(agy -p:*)"` to `permissions.allow` in `<file>` (or run `/permissions` and allow `Bash(agy -p:*)`).
-- One line on what it means: `agy -p` print-mode calls are now auto-approved, so `/agy:repo-scan`, `/agy:impact-map`, `/agy:sec-audit`, and `/agy:infra-debug` will run without hitting the classifier block. The commands stay user-typed-only.
+- One line on scope and what it means: the rule was written to `<file>` (global = whole machine, or one repo if `--project`), and it auto-approves **any** `agy -p …` call read from those settings — not only this plugin's commands. The practical effect is that `/agy:repo-scan`, `/agy:impact-map`, `/agy:sec-audit`, and `/agy:infra-debug` now run without hitting the classifier block. If you wrote it globally and would rather scope it to one repo, mention they can remove it and re-run with `--project`.
 
 Keep the output concise. Do not run any `/agy:*` analysis as part of setup.

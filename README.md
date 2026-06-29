@@ -61,7 +61,9 @@ For a hard read-only guarantee today, wrap `agy` yourself in an OS-level sandbox
 /agy:setup
 ```
 
-`/agy:setup` is a one-time step. It checks that `agy` is installed and authenticated, then adds the `Bash(agy -p:*)` permission rule to your Claude Code settings — or, if Claude Code's auto-mode classifier blocks the automatic edit, prints the one line for you to add (you can also run `/permissions` and allow `Bash(agy -p:*)`). Without that rule, the classifier blocks the analysis commands: the explorer subagent runs `agy -p … --dangerously-skip-permissions`, which the classifier treats as an "unsafe agent" and denies before it runs. The rule only auto-approves `agy`'s print-mode call; the commands stay user-typed-only, so `agy` still runs only when you invoke an `/agy:*` command yourself. Pass `--project` to scope the rule to the current repo instead of your global settings.
+`/agy:setup` is a one-time step. It checks that `agy` is installed and authenticated, then adds the `Bash(agy -p:*)` permission rule to your Claude Code settings — or, if Claude Code's auto-mode classifier blocks the automatic edit, prints the one line for you to add (you can also run `/permissions` and allow `Bash(agy -p:*)`). Without that rule, the classifier blocks the analysis commands: the explorer subagent runs `agy -p … --dangerously-skip-permissions`, which the classifier treats as an "unsafe agent" and denies before it runs.
+
+Be aware of what the rule grants: `Bash(agy -p:*)` auto-approves **every** `agy -p` print-mode call in any Claude Code session that reads those settings — not just this plugin's commands (`disable-model-invocation` keeps the plugin's *commands* from auto-firing, but it does not scope the permission). Since `agy -p` always carries `--dangerously-skip-permissions`, that is a deliberate "I trust `agy` to run on this machine without a per-call prompt" choice — the same trust the [Security & trust](#security--trust) section already asks for. Pass `--project` to limit the rule to the current repository instead of your whole machine.
 
 ## License
 
