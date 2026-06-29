@@ -31,6 +31,15 @@ jobs:
         # The documented flow tags a commit already merged to main. Guard it:
         # a v* tag pushed on an unmerged or stale branch (whose version fields
         # happen to match) must not publish a release from the wrong commit.
+        #
+        # This asserts ancestry, NOT tip-equality (origin/main == tag SHA), by
+        # design. Tip-equality races with any commit that lands on main between
+        # the tag push and this job running (TOCTOU), failing legitimate
+        # releases. Backfilling a release for an older version is benign: the
+        # version-field guard below forces the tag, commit, and notes to agree
+        # on the same version; re-tagging an existing version edits identical
+        # notes (idempotent step); and GitHub marks "latest" by semver, so an
+        # older backfill can't displace a newer release.
         run: |
           git fetch --no-tags origin main
           if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
