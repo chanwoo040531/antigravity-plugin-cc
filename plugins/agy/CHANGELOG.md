@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- `/agy:sec-audit` now defaults to `Claude Sonnet 4.6 (Thinking)` instead of the shared `Gemini 3.5 Flash (High)` default. Antigravity's Gemini models (verified on both Flash and Pro) categorically refuse security-audit / vulnerability-analysis requests, so the command returned a refusal instead of findings; non-Gemini Antigravity models perform the audit correctly. The override lives in the command framing only — the other three commands keep the Gemini default. Pass `--model` to choose a different model.
+
 ## 0.2.0
 
 - Replaced the temporary `/agy:explore` and `/agy:verify` commands with four broad-context analysis commands:

@@ -22,7 +22,8 @@ How to frame the request you forward:
 
 Routing flags (strip from the task text, hand to the subagent as runtime controls):
 
-- `--model <name>`: forward so the subagent passes it through to `agy --model`. Otherwise the default `Gemini 3.5 Flash (High)` is used.
+- `--model <name>`: forward so the subagent passes it through to `agy --model`.
+- **Model default — important:** unlike the other commands, sec-audit does NOT use the plugin's shared default (`Gemini 3.5 Flash (High)`). Antigravity's Gemini models (verified on both Flash and Pro) categorically refuse security-audit / vulnerability-analysis requests, returning a refusal instead of findings — and no prompt reframing gets around it. So when the user supplies no `--model`, forward `--model "Claude Sonnet 4.6 (Thinking)"` (a non-Gemini Antigravity model that performs the audit correctly). Only drop or change this when the user explicitly names another model.
 - `--add-dir <path>`: forward so the subagent adds that directory to agy's workspace (in addition to the current directory). Repeatable — useful for an external security-policy directory.
 
 Operating rules:
