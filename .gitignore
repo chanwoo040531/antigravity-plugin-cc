@@ -1,3 +1,6 @@
 node_modules/
 .DS_Store
 *.log
+
+# Claude Code local, machine-specific settings (never share)
+.claude/settings.local.json
