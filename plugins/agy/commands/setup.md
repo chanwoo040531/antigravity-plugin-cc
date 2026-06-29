@@ -1,7 +1,7 @@
 ---
 description: Configure this machine for the /agy:* commands — verify the Antigravity CLI (agy) is installed and authenticated, and add (or show how to add) the Bash permission rule that lets agy run inside the explorer subagent
 argument-hint: "[--project]"
-allowed-tools: Bash, Read, Edit
+allowed-tools: Bash, Read, Edit, Write
 disable-model-invocation: true
 ---
 
@@ -36,14 +36,14 @@ Resolve `~` to the real home directory before reading/writing.
 
 The rule to ensure is exactly this string: `Bash(agy -p:*)`
 
-- Read the target settings file.
-  - If `Bash(agy -p:*)` is already present anywhere in the file, it is already configured — do NOT add a duplicate. Skip to step 4 and report "already configured".
-  - Otherwise insert `"Bash(agy -p:*)"` as the **first** element of `permissions.allow`, preserving every existing entry and all other settings exactly.
+- Read the target settings file and inspect the **`permissions.allow` array specifically** — not the file as raw text. A substring match anywhere in the file is wrong: the same string could sit in `permissions.deny` or another field, which does NOT unblock the analysis commands.
+  - If `permissions.allow` already contains exactly `Bash(agy -p:*)`, it is already configured — do NOT add a duplicate. Skip to step 4 and report "already configured".
+  - Otherwise insert `"Bash(agy -p:*)"` as the **first** element of `permissions.allow`, preserving every existing entry and all other settings exactly. (If you also notice `Bash(agy -p:*)` sitting in `permissions.deny`, still add the allow entry, and call out the conflicting deny rule in your report — a deny rule there will keep the commands blocked.)
 - Handle these structure variants:
-  - File does not exist → create it with minimal content: `{ "permissions": { "allow": ["Bash(agy -p:*)"] } }`.
+  - File does not exist → create it with the `Write` tool, minimal content: `{ "permissions": { "allow": ["Bash(agy -p:*)"] } }`. (`Edit` cannot create a new file; use `Write` only for this missing-file case.)
   - File exists but has no `permissions` key → add `"permissions": { "allow": ["Bash(agy -p:*)"] }`.
   - `permissions` exists but has no `allow` array → add `"allow": ["Bash(agy -p:*)"]` inside it.
-- Prefer a single, surgical `Edit` that inserts the one line; do not reformat or reorder the rest of the file.
+- For an existing file, prefer a single, surgical `Edit` that inserts the one line; do not reformat or reorder the rest of the file.
 - After writing, validate the JSON. If `jq` is available, run `jq empty <file>` and confirm it exits 0; if `jq` is absent, skip this check rather than failing. If validation fails, restore the original content and fall back to the manual instructions in step 4.
 
 If the edit itself is denied by the auto-mode classifier (`[Self-Modification]`) — a likely outcome, not a rare one — do NOT fight it or try to work around the denial. Fall through to the manual instructions in step 4 and present them as the result.
