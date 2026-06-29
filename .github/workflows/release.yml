@@ -24,6 +24,19 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the tag commit can be checked against main
+
+      - name: Verify the tag commit is on main
+        # The documented flow tags a commit already merged to main. Guard it:
+        # a v* tag pushed on an unmerged or stale branch (whose version fields
+        # happen to match) must not publish a release from the wrong commit.
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "ERROR: tag $GITHUB_REF_NAME ($GITHUB_SHA) is not contained in origin/main." >&2
+            exit 1
+          fi
 
       - name: Verify tag matches version fields and CHANGELOG
         run: scripts/check-version.sh "${{ github.ref_name }}"
@@ -39,15 +52,25 @@ jobs:
             capture && /^## / { exit }
             capture { print }
           ' plugins/agy/CHANGELOG.md > release-notes.md
-          if [ ! -s release-notes.md ]; then
+          # A header with only blank lines under it still writes newline bytes,
+          # so check for at least one non-whitespace line, not just file size.
+          if ! grep -q '[^[:space:]]' release-notes.md; then
             echo "ERROR: extracted release notes are empty for $version." >&2
             exit 1
           fi
           echo "----- release notes -----"
           cat release-notes.md
 
-      - name: Create GitHub Release
+      - name: Create or update GitHub Release
+        # Idempotent so a rerun after a partial success (or to refresh notes)
+        # edits the existing release instead of failing on "already exists".
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
-            --notes-file release-notes.md
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          fi
