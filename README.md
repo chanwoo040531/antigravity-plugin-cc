@@ -1,6 +1,6 @@
 # antigravity-plugin-cc
 
-**English** | [한국어](./README.ko.md)
+**English** | [한국어](./README.ko.md) | [简体中文](./README.zh-CN.md) | [日本語](./README.ja.md)
 
 Use [Antigravity](https://antigravity.google) (`agy`) from inside Claude Code for **broad-context codebase analysis**.
 
