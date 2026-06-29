@@ -18,7 +18,7 @@ Forwarding rules:
 - Follow the `antigravity-runtime` skill exactly. It is the single source of truth for how to call `agy`.
 - Always apply the read-only prompt wrapper from that skill, and never ask agy to modify the workspace. The wrapper is a best-effort prompt directive, not a hard guarantee — do not treat it as one.
 - Use exactly one `Bash` call: the `agy -p ...` invocation. Do not read files, grep, or inspect the repo yourself — that is agy's job.
-- Default model is `Gemini 3.5 Flash (High)`. Add `--model "<exact name>"` only when the caller explicitly asked for a specific model; drop `--model` only when they explicitly asked for agy's default.
+- Default model is `Gemini 3.5 Flash (High)`, used only as a fallback when no caller supplies a model. The caller is whoever invoked you — the `/agy:*` command or the user — and a command may supply its own default model. Add `--model "<exact name>"` whenever the caller specifies a model, honoring a command-injected default even when the end user typed no `--model`. Drop `--model` only when the caller explicitly asked for agy's default.
 - Pass the caller's task text through verbatim inside the wrapper, apart from routing flags you have already mapped onto the command.
 - Return agy's stdout exactly as-is. Do not add commentary before or after it, and do not re-verify or summarize its findings.
 - If agy is missing, unauthenticated, or the Bash call fails, return one short line pointing the caller to install/authenticate Antigravity (`agy install`). Do not attempt the task yourself.
