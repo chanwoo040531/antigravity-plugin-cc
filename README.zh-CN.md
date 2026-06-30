@@ -70,6 +70,12 @@ agy -p "<以只读方式包裹的提示词>" --add-dir "$PWD" \
 
 请留意该规则授予了什么：`Bash(agy -p:*)` 会在任何读取这些设置的 Claude Code 会话中自动批准**每一次** `agy -p` 打印模式调用——而不仅是本插件的命令（`disable-model-invocation` 只阻止插件的*命令*自动触发，并不会限定权限的范围）。由于 `agy -p` 始终携带 `--dangerously-skip-permissions`，这是一个有意为之的“我信任 `agy` 在这台机器上无需逐次提示即可运行”的选择——与[安全与信任](#安全与信任)一节已经要求的信任相同。传入 `--project` 可将该规则限定到当前仓库，而非整台机器。
 
+## 致谢
+
+项目结构受 [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc) 启发
+(command → forwarder subagent → runtime skill)。由于 `agy -p` 是同步的一次性调用，
+无需 Codex 的常驻 broker 基础设施，因此做了简化。
+
 ## 许可证
 
 [MIT](./LICENSE)

@@ -70,6 +70,12 @@ For a hard read-only guarantee today, wrap `agy` yourself in an OS-level sandbox
 
 Be aware of what the rule grants: `Bash(agy -p:*)` auto-approves **every** `agy -p` print-mode call in any Claude Code session that reads those settings — not just this plugin's commands (`disable-model-invocation` keeps the plugin's *commands* from auto-firing, but it does not scope the permission). Since `agy -p` always carries `--dangerously-skip-permissions`, that is a deliberate "I trust `agy` to run on this machine without a per-call prompt" choice — the same trust the [Security & trust](#security--trust) section already asks for. Pass `--project` to limit the rule to the current repository instead of your whole machine.
 
+## Acknowledgments
+
+Structure inspired by [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc)
+(command → forwarder subagent → runtime skill), simplified because `agy -p` is a
+synchronous one-shot and needs none of Codex's persistent broker infrastructure.
+
 ## License
 
 [MIT](./LICENSE)

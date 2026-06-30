@@ -70,6 +70,12 @@ agy -p "<read-only로 감싼 프롬프트>" --add-dir "$PWD" \
 
 이 규칙이 무엇을 허용하는지 유의하세요: `Bash(agy -p:*)`는 해당 설정을 읽는 모든 Claude Code 세션에서 **모든** `agy -p` print-mode 호출을 자동 승인합니다 — 이 플러그인의 명령어만이 아닙니다(`disable-model-invocation`은 플러그인의 *명령어*가 자동 실행되는 것은 막지만, 권한의 범위를 좁히지는 않습니다). `agy -p`는 항상 `--dangerously-skip-permissions`를 동반하므로, 이는 "이 머신에서 `agy`가 매번 묻지 않고 실행되도록 신뢰한다"는 의도적인 선택입니다 — [보안과 신뢰](#보안과-신뢰) 섹션이 이미 요구하는 신뢰와 같습니다. 규칙을 머신 전체가 아니라 현재 저장소로 한정하려면 `--project`를 전달하세요.
 
+## 감사의 글
+
+구조는 [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc)에서 영감을 받았습니다
+(command → forwarder subagent → runtime skill). `agy -p`는 동기식 일회성 호출이라
+Codex의 영속 broker 인프라가 필요 없어 더 단순화했습니다.
+
 ## 라이선스
 
 [MIT](./LICENSE)
